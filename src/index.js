@@ -122,18 +122,19 @@ class Game extends React.Component {
 
 		const sortedMoves = () => {
 			let reversed = !this.state.ascending;
-			// if (!this.state.ascending) {
-			// 	reversed = true;
-			// }
 			return (
-				<ol reversed={reversed}>
+				<ul reversed={reversed}>
+					{sortButton()}
 					{this.state.ascending ? moves : moves.reverse()}
-				</ol>
+				</ul>
 			);
 		};
 
 		var sortButton = () => {
-			const sortType = this.state.ascending ? "Ascending" : "Descending";
+			const unicoder = (code) => {
+				return String.fromCharCode(parseInt(code, 16));
+			};
+			const sortType = this.state.ascending ? unicoder(2191) : unicoder(2193);
 			return (
 				<div>
 					<button onClick={() => this.handleSort()}>Sort: {sortType}</button>
@@ -157,8 +158,8 @@ class Game extends React.Component {
 					/>
 				</div>
 				<div className="game-info">
-					{sortButton()}
 					<div>{status}</div>
+					{/* {sortButton()} */}
 					{sortedMoves()}
 				</div>
 			</div>
