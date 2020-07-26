@@ -14,6 +14,7 @@ class Board extends React.Component {
 	renderSquare(i) {
 		return (
 			<Square
+				key={i}
 				value={this.props.squares[i]}
 				onClick={() => this.props.onClick(i)}
 			/>
@@ -26,7 +27,11 @@ class Board extends React.Component {
 		for (let i = 0; i < perRow; i++) {
 			squares.push(this.renderSquare(i + perRow * row));
 		}
-		return <div className="board-row">{squares}</div>;
+		return (
+			<div key={row} className="board-row">
+				{squares}
+			</div>
+		);
 	}
 
 	renderBoardRows() {
@@ -54,7 +59,7 @@ class Game extends React.Component {
 			],
 			stepNumber: 0,
 			xIsNext: true,
-			descending: false,
+			ascending: true,
 		};
 	}
 
@@ -87,18 +92,14 @@ class Game extends React.Component {
 
 	handleSort() {
 		this.setState({
-			descending: !this.descending,
+			ascending: !this.state.ascending,
 		});
 	}
 
 	render() {
-		var history = this.state.history;
+		const history = this.state.history;
 		const current = history[this.state.stepNumber];
 		const winner = calculateWinner(current.squares);
-
-		if (this.state.descending) {
-			history = history.reverse();
-		}
 
 		const moves = history.map((step, move) => {
 			const row = Math.floor(step.lastMove / 3) + 1;
@@ -119,6 +120,27 @@ class Game extends React.Component {
 			);
 		});
 
+		const sortedMoves = () => {
+			let reversed = !this.state.ascending;
+			// if (!this.state.ascending) {
+			// 	reversed = true;
+			// }
+			return (
+				<ol reversed={reversed}>
+					{this.state.ascending ? moves : moves.reverse()}
+				</ol>
+			);
+		};
+
+		var sortButton = () => {
+			const sortType = this.state.ascending ? "Ascending" : "Descending";
+			return (
+				<div>
+					<button onClick={() => this.handleSort()}>Sort: {sortType}</button>
+				</div>
+			);
+		};
+
 		let status;
 		if (winner) {
 			status = "Winner: " + winner;
@@ -135,8 +157,9 @@ class Game extends React.Component {
 					/>
 				</div>
 				<div className="game-info">
+					{sortButton()}
 					<div>{status}</div>
-					<ol>{moves}</ol>
+					{sortedMoves()}
 				</div>
 			</div>
 		);
